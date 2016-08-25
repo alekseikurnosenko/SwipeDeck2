@@ -64,6 +64,18 @@ public class CardContainer {
         return swipeListener;
     }
 
+    public void setLeftImageResource(int leftImageResource){
+        View left = view.findViewById(leftImageResource);
+        left.setAlpha(0);
+        swipeListener.setLeftView(left);
+
+    }
+    public void setRightImageResource(int rightImageResource){
+        View right = view.findViewById(rightImageResource);
+        right.setAlpha(0);
+        swipeListener.setRightView(right);
+    }
+
     public void setupSwipeListener(){
         this.swipeListener = new SwipeListener(view, callback, parent.getPaddingLeft(), parent.getPaddingTop(), parent.ROTATION_DEGREES, parent.OPACITY_END, parent);
     }

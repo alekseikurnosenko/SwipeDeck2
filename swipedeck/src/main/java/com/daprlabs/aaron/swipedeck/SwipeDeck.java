@@ -9,13 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import com.daprlabs.aaron.swipedeck.Utility.Deck;
 import com.daprlabs.aaron.swipedeck.Utility.RxBus;
 import com.daprlabs.aaron.swipedeck.Utility.SwipeCallback;
-
-import java.util.LinkedList;
 
 /**
  * Created by aaron on 21/08/2016.
@@ -27,7 +24,6 @@ public class SwipeDeck extends FrameLayout {
     public float OPACITY_END;
     public float ROTATION_DEGREES;
     private float CARD_SPACING;
-
     public static int ANIMATION_DURATION = 200;
 
     private RxBus bus = new RxBus();
@@ -36,6 +32,9 @@ public class SwipeDeck extends FrameLayout {
     private Deck<CardContainer> deck;
     private SwipeDeckCallback callback;
     private CardContainer buffer;
+
+    private int leftImageResource;
+    private int rightImageResource;
 
     private int adapterIndex = 0;
 
@@ -154,8 +153,7 @@ public class SwipeDeck extends FrameLayout {
             newBottomChild.setAlpha(0);
             newBottomChild.setY(getPaddingTop());
 
-            // add view to the pre deck buffer
-            deck.add(new CardContainer(newBottomChild, this, new SwipeCallback() {
+            CardContainer card = new CardContainer(newBottomChild, this, new SwipeCallback() {
                 @Override
                 public void cardSwipedLeft(View card) {
                     Log.d(TAG, "card swiped left");
@@ -194,7 +192,15 @@ public class SwipeDeck extends FrameLayout {
                 public void cardActionUp() {
 
                 }
-            }));
+            });
+
+            if(leftImageResource != 0){
+                card.setLeftImageResource(leftImageResource);
+            }
+            if(rightImageResource != 0){
+                card.setRightImageResource(rightImageResource);
+            }
+            deck.add(card);
             adapterIndex++;
         }
     }
@@ -263,6 +269,14 @@ public class SwipeDeck extends FrameLayout {
 
     public void clearBuffer() {
         this.buffer = null;
+    }
+
+    public void setLeftImage(int imageResource) {
+        leftImageResource = imageResource;
+    }
+
+    public void setRightImage(int imageResource) {
+        rightImageResource = imageResource;
     }
 
     public interface SwipeDeckCallback{
