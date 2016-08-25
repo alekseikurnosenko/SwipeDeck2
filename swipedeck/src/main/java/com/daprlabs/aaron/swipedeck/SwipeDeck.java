@@ -1,8 +1,10 @@
 package com.daprlabs.aaron.swipedeck;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -240,6 +242,7 @@ public class SwipeDeck extends FrameLayout {
 
     private void positionCards() {
 
+        setZTranslations();
         for(int i=0; i<deck.size(); ++i){
             View card = deck.get(i).getCard();
             float offset = (int) (deck.get(i).getPositionWithinViewGroup() * CARD_SPACING);
@@ -277,6 +280,17 @@ public class SwipeDeck extends FrameLayout {
 
     public void setRightImage(int imageResource) {
         rightImageResource = imageResource;
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setZTranslations() {
+        //this is only needed to add shadows to cardviews on > lollipop
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int count = getChildCount();
+            for (int i = 0; i < count; ++i) {
+                getChildAt(i).setTranslationZ(i * 10);
+            }
+        }
     }
 
     public interface SwipeDeckCallback{
