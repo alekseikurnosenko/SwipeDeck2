@@ -1,4 +1,4 @@
-package com.daprlabs.aaron.swipedeck3;
+package com.daprlabs.aaron.swipedeck2;
 
 import android.app.Activity;
 import android.os.Bundle;

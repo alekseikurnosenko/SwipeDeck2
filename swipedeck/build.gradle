@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: "com.jfrog.bintray"
 
 android {
     compileSdkVersion 23
@@ -18,6 +20,7 @@ android {
     }
 }
 
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
@@ -26,3 +29,34 @@ dependencies {
     compile 'io.reactivex:rxjava:1.1.9'
 
 }
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'swipedeck2'   // Has to be same as your library module name
+
+    publishedGroupId = 'com.daprlabs.aaron'
+    libraryName = 'SwipeDeck2'
+    artifact = 'swipedeck'     // Has to be same as your library module name
+
+    libraryDescription = 'A re-write of the popular SwipeDeck library for doing tinder style card animations on Android'
+
+    // Your github repo link
+    siteUrl = 'https://github.com/aaronbond/SwipeDeck2'
+    gitUrl = 'https://github.com/aaronbond/SwipeDeck2'
+
+    libraryVersion = '2.0.1'
+
+    developerId = 'aaronbond'
+    developerName = 'Aaron Bond'
+    developerEmail = 'aaron.r.bond@gmail.com'
+
+    licenseName = 'MIT'
+    licenseUrl = 'https://opensource.org/licenses/MIT'
+    allLicenses = ["MIT"]
+}
+
+
+// Place it at the end of the file
+apply from: 'https://raw.githubusercontent.com/nisrulz/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nisrulz/JCenter/master/bintrayv1.gradle'
+

@@ -1,4 +1,4 @@
-package com.daprlabs.aaron.swipedeck3;
+package com.daprlabs.aaron.swipedeck;
 
 import org.junit.Test;
 

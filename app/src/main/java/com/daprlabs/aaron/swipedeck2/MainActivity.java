@@ -1,4 +1,4 @@
-package com.daprlabs.aaron.swipedeck3;
+package com.daprlabs.aaron.swipedeck2;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
-import com.daprlabs.aaron.swipedeck.Utility.SwipeCallback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

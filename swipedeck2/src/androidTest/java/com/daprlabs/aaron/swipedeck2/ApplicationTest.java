@@ -1,4 +1,4 @@
-package com.daprlabs.aaron.swipedeck3;
+package com.daprlabs.aaron.swipedeck;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
