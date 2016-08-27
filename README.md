@@ -9,7 +9,18 @@ this is a very early release so i'm relying on your bug reports and feature sugg
 
 ## Installation
 
-coming soon!
+In your repositories and dependencies section add these parameters:
+
+```groovy
+dependencies {
+    compile 'com.daprlabs.aaron:swipedeck:2.0.2'
+}
+```
+Sync Gradle and import Swipe-Deck into your project
+
+```java
+import com.daprlabs.cardstack.SwipeDeck;
+```
 
 ## Example 
 
