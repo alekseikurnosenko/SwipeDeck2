@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.os.Build;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +28,7 @@ public class SwipeDeck extends FrameLayout {
     public float ROTATION_DEGREES;
     private float CARD_SPACING;
     public static int ANIMATION_DURATION = 200;
+    public boolean RENDER_ABOVE;
 
     private RxBus bus = new RxBus();
     private Adapter mAdapter;
@@ -51,6 +53,7 @@ public class SwipeDeck extends FrameLayout {
         OPACITY_END = a.getFloat(R.styleable.SwipeDeck2_opacity_end, 0.33f);
         ROTATION_DEGREES = a.getFloat(R.styleable.SwipeDeck2_rotation_degrees, 15f);
         CARD_SPACING = a.getDimension(R.styleable.SwipeDeck2_card_spacing, 15f);
+        RENDER_ABOVE = a.getBoolean(R.styleable.SwipeDeck2_render_above, true);
 
         deck = new Deck<>(new Deck.ListEventListener() {
             @Override
@@ -90,6 +93,12 @@ public class SwipeDeck extends FrameLayout {
         setClipToPadding(false);
         setClipChildren(false);
         this.setWillNotDraw(false);
+
+        //if render above is set make sure everything in this view renders above other views
+        //outside of it.
+        if (RENDER_ABOVE) {
+            ViewCompat.setTranslationZ(this, Float.MAX_VALUE);
+        }//todo: make an else here possibly
 
     }
 
