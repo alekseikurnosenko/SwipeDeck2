@@ -29,6 +29,7 @@ public class SwipeDeck extends FrameLayout {
     private float CARD_SPACING;
     public static int ANIMATION_DURATION = 200;
     public boolean RENDER_ABOVE;
+    private boolean mHasStableIds;
 
     private RxBus bus = new RxBus();
     private Adapter mAdapter;
@@ -60,17 +61,19 @@ public class SwipeDeck extends FrameLayout {
             public void itemAdded(Object object, int position) {
                 //let the card container know it's own position within the deck
                 deck.get(position).setPositionWithinViewGroup(position);
-                if(position == 0){deck.get(0).setSwipeEnabled(true);}
+                if (position == 0) {
+                    deck.get(0).setSwipeEnabled(true);
+                }
                 renderDeck();
             }
 
             @Override
             public void itemRemoved(Object object) {
                 // move view into the buffer while it's animation completes and cleanup is done
-                buffer = (CardContainer)object;
+                buffer = (CardContainer) object;
                 //enable swipe in the next cardContainer
                 int index = 0;
-                if(index < deck.size()){
+                if (index < deck.size()) {
                     deck.get(index).setSwipeEnabled(true);
                 }
                 buffer.cleanupAndRemoveView();
@@ -102,11 +105,12 @@ public class SwipeDeck extends FrameLayout {
 
     }
 
-    public void setAdapter(Adapter adapter) {
+    public void setAdapter(final Adapter adapter) {
 
         if (this.mAdapter != null) {
             this.mAdapter.unregisterDataSetObserver(observer);
         }
+        mHasStableIds = adapter.hasStableIds();
         mAdapter = adapter;
         observer = new DataSetObserver() {
             @Override
@@ -115,14 +119,21 @@ public class SwipeDeck extends FrameLayout {
                 //handle data set changes
                 //if we need to add any cards at this point (ie. the amount of cards in the deck
                 //is less than the max number of cards to display) add the cards.
+
                 int deckSize = deck.size();
                 //only perform action if there are less cards on screen than NUMBER_OF_CARDS
-                if(deckSize < NUMBER_OF_SIMULTANEOUS_CARDS) {
+                if (deckSize < NUMBER_OF_SIMULTANEOUS_CARDS) {
                     for (int i = deckSize; i < NUMBER_OF_SIMULTANEOUS_CARDS; ++i) {
                         addNextView();
                     }
                 }
+                //if the adapter has been emptied empty the view and reset adapterIndex
+                if (adapter.getCount() == 0) {
+                    deck.clear();
+                    adapterIndex = 0;
+                }
             }
+
             @Override
             public void onInvalidated() {
                 //reset state, remove views and request layout
@@ -155,8 +166,8 @@ public class SwipeDeck extends FrameLayout {
         }
     }
 
-    private void addNextView(){
-        if(adapterIndex < mAdapter.getCount()){
+    private void addNextView() {
+        if (adapterIndex < mAdapter.getCount()) {
             View newBottomChild = mAdapter.getView(adapterIndex, null, this);
             newBottomChild.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             //todo: i'm setting the card to invisible initially and making it visible when i animate
@@ -170,8 +181,8 @@ public class SwipeDeck extends FrameLayout {
                     Log.d(TAG, "card swiped left");
 
                     //remove the card container containing 'card'
-                    for(int i=0; i<deck.size(); ++i){
-                        if(deck.get(i).getCard() == card){
+                    for (int i = 0; i < deck.size(); ++i) {
+                        if (deck.get(i).getCard() == card) {
                             deck.remove(deck.get(i));
                             break;
                         }
@@ -181,8 +192,8 @@ public class SwipeDeck extends FrameLayout {
                 @Override
                 public void cardSwipedRight(View card) {
                     Log.d(TAG, "card swiped right");
-                    for(int i=0; i<deck.size(); ++i){
-                        if(deck.get(i).getCard() == card){
+                    for (int i = 0; i < deck.size(); ++i) {
+                        if (deck.get(i).getCard() == card) {
                             deck.remove(deck.get(i));
                             break;
                         }
@@ -205,43 +216,46 @@ public class SwipeDeck extends FrameLayout {
                 }
             });
 
-            if(leftImageResource != 0){
+            if (leftImageResource != 0) {
                 card.setLeftImageResource(leftImageResource);
             }
-            if(rightImageResource != 0){
+            if (rightImageResource != 0) {
                 card.setRightImageResource(rightImageResource);
+            }
+            if (mHasStableIds) {
+                card.setId(mAdapter.getItemId(adapterIndex));
             }
             deck.add(card);
             adapterIndex++;
         }
     }
 
-    private void renderDeck(){
+    private void renderDeck() {
         //we remove all the views and re add them so that the Z translation is correct
         removeAllViews();
-        for(int i=deck.size()-1; i>=0; --i){
+        for (int i = deck.size() - 1; i >= 0; --i) {
             CardContainer container = deck.get(i);
             View card = container.getCard();
             ViewGroup.LayoutParams params = card.getLayoutParams();
 
-            if(params == null) {
+            if (params == null) {
                 params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             }
 
-            addViewInLayout(card,-1,params,true);
+            addViewInLayout(card, -1, params, true);
             int itemWidth = getWidth() - (getPaddingLeft() + getPaddingRight());
             int itemHeight = getHeight() - (getPaddingTop() + getPaddingBottom());
             card.measure(MeasureSpec.EXACTLY | itemWidth, MeasureSpec.EXACTLY | itemHeight);
         }
         //if there's still a card animating in the buffer, make sure it's re added after removing all views
-        if(buffer != null){
+        if (buffer != null) {
             View card = buffer.getCard();
             ViewGroup.LayoutParams params = card.getLayoutParams();
 
-            if(params == null) {
+            if (params == null) {
                 params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             }
-            addViewInLayout(card,-1,params,true);
+            addViewInLayout(card, -1, params, true);
             int itemWidth = getWidth() - (getPaddingLeft() + getPaddingRight());
             int itemHeight = getHeight() - (getPaddingTop() + getPaddingBottom());
             card.measure(MeasureSpec.EXACTLY | itemWidth, MeasureSpec.EXACTLY | itemHeight);
@@ -252,7 +266,7 @@ public class SwipeDeck extends FrameLayout {
     private void positionCards() {
 
         setZTranslations();
-        for(int i=0; i<deck.size(); ++i){
+        for (int i = 0; i < deck.size(); ++i) {
             View card = deck.get(i).getCard();
             float offset = (int) (deck.get(i).getPositionWithinViewGroup() * CARD_SPACING);
             card.animate()
@@ -266,14 +280,15 @@ public class SwipeDeck extends FrameLayout {
         this.callback = callback;
     }
 
-    public void swipeTopCardLeft(int duration){
-        if(deck.size() > 0) {
+    public void swipeTopCardLeft(int duration) {
+        if (deck.size() > 0) {
             deck.get(0).getSwipeListener().animateOffScreenLeft(duration);
             deck.remove(0);
         }
     }
-    public void swipeTopCardRight(int duration){
-        if(deck.size() > 0){
+
+    public void swipeTopCardRight(int duration) {
+        if (deck.size() > 0) {
             deck.get(0).getSwipeListener().animateOffScreenRight(duration);
             deck.remove(0);
         }
@@ -302,8 +317,9 @@ public class SwipeDeck extends FrameLayout {
         }
     }
 
-    public interface SwipeDeckCallback{
+    public interface SwipeDeckCallback {
         void cardSwipedLeft(int positionInAdapter);
+
         void cardSwipedRight(int positoinInAdapter);
     }
 }

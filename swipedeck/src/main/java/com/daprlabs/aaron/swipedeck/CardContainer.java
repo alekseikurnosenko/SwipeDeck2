@@ -17,6 +17,7 @@ public class CardContainer {
     private SwipeListener swipeListener;
     private SwipeCallback callback;
     private SwipeDeck parent;
+    private long id;
 
     public CardContainer(View view, SwipeDeck parent, SwipeCallback callback){
         this.view = view;
@@ -73,5 +74,13 @@ public class CardContainer {
 
     public void setupSwipeListener(){
         this.swipeListener = new SwipeListener(view, callback, parent.getPaddingLeft(), parent.getPaddingTop(), parent.ROTATION_DEGREES, parent.OPACITY_END, parent);
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }
