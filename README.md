@@ -19,7 +19,7 @@ dependencies {
 Sync Gradle and import Swipe-Deck into your project
 
 ```java
-import com.daprlabs.cardstack.SwipeDeck;
+import com.daprlabs.aaron.swipedeck.SwipeDeck;
 ```
 
 ## Example 
