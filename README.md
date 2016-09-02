@@ -13,7 +13,7 @@ In your repositories and dependencies section add these parameters:
 
 ```groovy
 dependencies {
-    compile 'com.daprlabs.aaron:swipedeck:2.0.2'
+    compile 'com.daprlabs.aaron:swipedeck:2.0.3'
 }
 ```
 Sync Gradle and import Swipe-Deck into your project
