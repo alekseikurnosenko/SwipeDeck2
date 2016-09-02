@@ -44,7 +44,7 @@ ext {
     siteUrl = 'https://github.com/aaronbond/SwipeDeck2'
     gitUrl = 'https://github.com/aaronbond/SwipeDeck2'
 
-    libraryVersion = '2.0.2'
+    libraryVersion = '2.0.3'
 
     developerId = 'aaronbond'
     developerName = 'Aaron Bond'

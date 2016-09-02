@@ -29,6 +29,7 @@ public class SwipeDeck extends FrameLayout {
     private float CARD_SPACING;
     public static int ANIMATION_DURATION = 200;
     public boolean RENDER_ABOVE;
+    public boolean SWIPE_ENABLED;
     private boolean mHasStableIds;
 
     private RxBus bus = new RxBus();
@@ -55,6 +56,7 @@ public class SwipeDeck extends FrameLayout {
         ROTATION_DEGREES = a.getFloat(R.styleable.SwipeDeck2_rotation_degrees, 15f);
         CARD_SPACING = a.getDimension(R.styleable.SwipeDeck2_card_spacing, 15f);
         RENDER_ABOVE = a.getBoolean(R.styleable.SwipeDeck2_render_above, true);
+        SWIPE_ENABLED = a.getBoolean(R.styleable.SwipeDeck2_swipe_enabled, true);
 
         deck = new Deck<>(new Deck.ListEventListener() {
             @Override
@@ -292,6 +294,13 @@ public class SwipeDeck extends FrameLayout {
             deck.get(0).getSwipeListener().animateOffScreenRight(duration);
             deck.remove(0);
         }
+    }
+
+    public void setAdapterIndex(int index){
+        this.adapterIndex = index;
+    }
+    public int getAdapterIndex(){
+        return this.adapterIndex;
     }
 
     public void clearBuffer() {

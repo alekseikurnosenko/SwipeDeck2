@@ -6,5 +6,6 @@
         <attr name="rotation_degrees" format="float"/>
         <attr name="card_spacing" format="dimension"/>
         <attr name="render_above" format="boolean"/>
+        <attr name="swipe_enabled" format="boolean"/>
     </declare-styleable>
 </resources>

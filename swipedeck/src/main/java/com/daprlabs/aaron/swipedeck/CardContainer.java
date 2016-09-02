@@ -73,7 +73,9 @@ public class CardContainer {
     }
 
     public void setupSwipeListener(){
-        this.swipeListener = new SwipeListener(view, callback, parent.getPaddingLeft(), parent.getPaddingTop(), parent.ROTATION_DEGREES, parent.OPACITY_END, parent);
+        if(parent.SWIPE_ENABLED){
+            this.swipeListener = new SwipeListener(view, callback, parent.getPaddingLeft(), parent.getPaddingTop(), parent.ROTATION_DEGREES, parent.OPACITY_END, parent);
+        }
     }
 
     public long getId() {
