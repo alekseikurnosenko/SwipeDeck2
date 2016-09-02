@@ -152,31 +152,43 @@ Next Swipe Deck takes an adapter in much the same way as other adapter views:
 Now we add a swipe deck to our layout:
 
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
-<com.daprlabs.cardstack.SwipeFrameLayout
+<com.daprlabs.aaron.swipedeck.layouts.SwipeFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:swipedeck="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/swipeLayout"
     android:orientation="vertical">
 
-    <com.daprlabs.cardstack.SwipeDeck
+    <com.daprlabs.aaron.swipedeck.SwipeDeck
         android:id="@+id/swipe_deck"
         android:layout_width="match_parent"
         android:layout_height="480dp"
-        android:padding="20dp"
-        swipedeck:card_spacing="10dp"
+        android:padding="50dp"
         swipedeck:max_visible="3"
-        swipedeck:render_above="true"
-        swipedeck:rotation_degrees="15" />
+        swipedeck:card_spacing="15dp"
+        swipedeck:swipe_enabled="false"/>
 
     <Button
+        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:text="Button" />
+        android:text="swipe left" />
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:text="add card" />
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:text="swipe right" />
 
-</com.daprlabs.cardstack.SwipeFrameLayout>
+</com.daprlabs.aaron.swipedeck.layouts.SwipeFrameLayout>
 
 ```
 I've included some modified layouts (SwipeFrameLayout, SwipeRelativeLayout etc) for ease of use, but you can use any layout you desire. However you may not get the desired outcome unless you set android:clipChildren="false" on your containing layout. If you choose not to do this cards will be clipped as they move outside their view boundary.
