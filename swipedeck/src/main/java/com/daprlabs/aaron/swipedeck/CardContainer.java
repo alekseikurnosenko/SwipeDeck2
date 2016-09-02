@@ -19,7 +19,7 @@ public class CardContainer {
     private SwipeDeck parent;
     private long id;
 
-    public CardContainer(View view, SwipeDeck parent, SwipeCallback callback){
+    public CardContainer(View view, SwipeDeck parent, SwipeCallback callback) {
         this.view = view;
         this.parent = parent;
         this.callback = callback;
@@ -27,14 +27,19 @@ public class CardContainer {
         setupSwipeListener();
     }
 
-    public void setPositionWithinViewGroup(int pos){this.positionWithinViewGroup = pos;}
-    public int getPositionWithinViewGroup(){return positionWithinViewGroup;}
+    public void setPositionWithinViewGroup(int pos) {
+        this.positionWithinViewGroup = pos;
+    }
 
-    public View getCard(){
+    public int getPositionWithinViewGroup() {
+        return positionWithinViewGroup;
+    }
+
+    public View getCard() {
         return this.view;
     }
 
-    public void cleanupAndRemoveView(){
+    public void cleanupAndRemoveView() {
         //wait for card to render off screen, do cleanup and remove from viewgroup
         view.postDelayed(new Runnable() {
             @Override
@@ -44,38 +49,39 @@ public class CardContainer {
         }, SwipeDeck.ANIMATION_DURATION);
     }
 
-    private void deleteViewFromSwipeDeck(){
+    private void deleteViewFromSwipeDeck() {
         parent.removeView(view);
         parent.clearBuffer();
     }
 
-    public void setSwipeEnabled(boolean enabled){
-        if(enabled){
+    public void setSwipeEnabled(boolean enabled) {
+        //also checks in case user doesn't want to be able to swipe the card freely
+        if (enabled && parent.SWIPE_ENABLED) {
             view.setOnTouchListener(swipeListener);
-        }else{
+        } else {
             view.setOnTouchListener(null);
         }
     }
-    public SwipeListener getSwipeListener(){
+
+    public SwipeListener getSwipeListener() {
         return swipeListener;
     }
 
-    public void setLeftImageResource(int leftImageResource){
+    public void setLeftImageResource(int leftImageResource) {
         View left = view.findViewById(leftImageResource);
         left.setAlpha(0);
         swipeListener.setLeftView(left);
 
     }
-    public void setRightImageResource(int rightImageResource){
+
+    public void setRightImageResource(int rightImageResource) {
         View right = view.findViewById(rightImageResource);
         right.setAlpha(0);
         swipeListener.setRightView(right);
     }
 
-    public void setupSwipeListener(){
-        if(parent.SWIPE_ENABLED){
-            this.swipeListener = new SwipeListener(view, callback, parent.getPaddingLeft(), parent.getPaddingTop(), parent.ROTATION_DEGREES, parent.OPACITY_END, parent);
-        }
+    public void setupSwipeListener() {
+        this.swipeListener = new SwipeListener(view, callback, parent.getPaddingLeft(), parent.getPaddingTop(), parent.ROTATION_DEGREES, parent.OPACITY_END, parent);
     }
 
     public long getId() {

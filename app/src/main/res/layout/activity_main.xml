@@ -13,7 +13,8 @@
         android:layout_height="480dp"
         android:padding="50dp"
         swipedeck:max_visible="3"
-        swipedeck:card_spacing="15dp"/>
+        swipedeck:card_spacing="15dp"
+        swipedeck:swipe_enabled="false"/>
 
     <Button
         android:id="@+id/button"
