@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         cardStack.setLeftImage(R.id.left_image);
         cardStack.setRightImage(R.id.right_image);
 
-        Button btn = (Button) findViewById(R.id.button);
+        Button btn = (Button) findViewById(R.id.button_left);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        Button btn2 = (Button) findViewById(R.id.button2);
+        Button btn2 = (Button) findViewById(R.id.button_right);
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button btn3 = (Button) findViewById(R.id.button3);
+        Button btn3 = (Button) findViewById(R.id.button_center);
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

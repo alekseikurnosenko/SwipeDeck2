@@ -17,19 +17,19 @@
         swipedeck:swipe_enabled="false"/>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/button_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:text="swipe left" />
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/button_center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:text="add card" />
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/button_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
