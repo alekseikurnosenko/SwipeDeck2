@@ -1,5 +1,8 @@
 package com.daprlabs.aaron.swipedeck2;
 
+import com.daprlabs.aaron.swipedeck.SwipeDeck;
+import com.squareup.picasso.Picasso;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,11 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.daprlabs.aaron.swipedeck.SwipeDeck;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +26,14 @@ public class MainActivity extends AppCompatActivity {
     private Context context = this;
     private SwipeDeckAdapter adapter;
     private ArrayList<String> testData;
+    private CheckBox dragCheckbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         cardStack = (SwipeDeck) findViewById(R.id.swipe_deck);
+        dragCheckbox = (CheckBox) findViewById(R.id.checkbox_drag);
 
         testData = new ArrayList<>();
         testData.add("0");
@@ -53,6 +56,11 @@ public class MainActivity extends AppCompatActivity {
             public void cardSwipedRight(long stableId) {
                 Log.i("MainActivity", "card was swiped right, position in adapter: " + stableId);
 
+            }
+
+            @Override
+            public boolean isDragEnabled(long itemId) {
+                return dragCheckbox.isChecked();
             }
         });
 

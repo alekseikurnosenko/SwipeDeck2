@@ -1,5 +1,7 @@
 package com.daprlabs.aaron.swipedeck.Utility;
 
+import com.daprlabs.aaron.swipedeck.SwipeDeck;
+
 import android.animation.Animator;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -7,10 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.view.animation.OvershootInterpolator;
-
-import com.daprlabs.aaron.swipedeck.SwipeDeck;
-
-import java.util.ArrayList;
 
 /**
  * Created by aaron on 4/12/2015.
@@ -34,26 +32,6 @@ public class SwipeListener implements View.OnTouchListener {
     private boolean deactivated;
     private View rightView;
     private View leftView;
-
-
-    //new animation vars
-    private ArrayList<View> underCards;
-    private int cardSpacing;
-    private int xScale;
-    private String TAG = "SwipeListener";
-
-
-    public SwipeListener(View card, final SwipeCallback callback, int initialX, int initialY, float rotation, float opacityEnd) {
-        this.card = card;
-        this.initialX = initialX;
-        this.initialY = initialY;
-        this.callback = callback;
-        this.parent = (ViewGroup) card.getParent();
-        this.parentWidth = parent.getWidth();
-        this.ROTATION_DEGREES = rotation;
-        this.OPACITY_END = opacityEnd;
-        this.paddingLeft = ((ViewGroup) card.getParent()).getPaddingLeft();
-    }
 
     public SwipeListener(View card, final SwipeCallback callback, int initialX, int initialY, float rotation, float opacityEnd, SwipeDeck parent) {
         this.card = card;
@@ -111,6 +89,18 @@ public class SwipeListener implements View.OnTouchListener {
                 final float dx = xMove - initialXPress;
                 final float dy = yMove - initialYPress;
 
+                //in this circumstance consider the motion a click
+                if (Math.abs(dx + dy) > 5) {
+                    click = false;
+                }
+
+                // Check whether we are allowed to drag this card
+                // We don't want to do this at the start of the branch, as we need to check whether we exceeded
+                // moving threshold first
+                if (!callback.isDragEnabled()) {
+                    return false;
+                }
+
                 Log.d("X:" , "" + v.getX());
 
                 //throw away the move in this case as it seems to be wrong
@@ -122,9 +112,6 @@ public class SwipeListener implements View.OnTouchListener {
                 //calc rotation here
                 float posX = card.getX() + dx;
                 float posY = card.getY() + dy;
-
-                //in this circumstance consider the motion a click
-                if (Math.abs(dx + dy) > 5) click = false;
 
                 card.setX(posX);
                 card.setY(posY);
