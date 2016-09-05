@@ -323,6 +323,19 @@ public class SwipeDeck extends FrameLayout {
         return this.adapterIndex;
     }
 
+    /**
+     * Get item id associated with the card on top of the deck.
+     *
+     * @return item id of the card on the top of the stack or -1 if deck is empty
+     */
+    public long getTopCardItemId() {
+        if (deck.size() > 0) {
+            return deck.getFront().getId();
+        } else {
+            return -1;
+        }
+    }
+
     public void removeFromBuffer(CardContainer container) {
         this.buffer.remove(container);
     }
