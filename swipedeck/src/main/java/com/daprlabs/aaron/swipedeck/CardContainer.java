@@ -13,6 +13,7 @@ public class CardContainer {
 
     private View view;
     int positionWithinViewGroup = -1;
+    int positionWithinAdapter = -1;
     private SwipeListener swipeListener;
     private SwipeCallback callback;
     private SwipeDeck parent;
@@ -89,5 +90,13 @@ public class CardContainer {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public void setPositionWithinAdapter(int position){
+        this.positionWithinAdapter = position;
+    }
+
+    public int getPositionWithinAdapter(){
+        return positionWithinAdapter;
     }
 }

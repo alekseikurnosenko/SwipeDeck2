@@ -79,8 +79,9 @@ public class MainActivity extends AppCompatActivity {
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                testData.add("a sample string.");
-                adapter.notifyDataSetChanged();
+//                testData.add("a sample string.");
+//                adapter.notifyDataSetChanged();
+                cardStack.unSwipeCard();
             }
         });
 

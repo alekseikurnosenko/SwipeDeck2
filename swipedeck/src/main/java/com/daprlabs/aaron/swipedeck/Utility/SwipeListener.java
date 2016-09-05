@@ -251,7 +251,7 @@ public class SwipeListener implements View.OnTouchListener {
                 .translationX(0);
     }
 
-    public ViewPropertyAnimator animateOffScreenLeft(int duration) {
+    private ViewPropertyAnimator animateOffScreenLeft(int duration) {
         return card.animate()
                 .setDuration(SwipeDeck.ANIMATION_DURATION)
                 .x(-(parentWidth))
@@ -259,12 +259,20 @@ public class SwipeListener implements View.OnTouchListener {
                 .rotation(-30);
     }
 
-    public ViewPropertyAnimator animateOffScreenRight(int duration) {
+    private ViewPropertyAnimator animateOffScreenRight(int duration) {
         return card.animate()
                 .setDuration(SwipeDeck.ANIMATION_DURATION)
                 .x(parentWidth * 2)
                 .y(0)
                 .rotation(30);
+    }
+
+    public void swipeCardLeft(int duration){
+        animateOffScreenLeft(duration);
+    }
+
+    public void swipeCardRight(int duration){
+        animateOffScreenRight(duration);
     }
 
     public void setRightView(View image) {
