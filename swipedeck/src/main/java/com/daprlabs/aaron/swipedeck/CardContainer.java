@@ -12,7 +12,6 @@ import com.daprlabs.aaron.swipedeck.Utility.SwipeListener;
 public class CardContainer {
 
     private View view;
-    private RxBus bus;
     int positionWithinViewGroup = -1;
     private SwipeListener swipeListener;
     private SwipeCallback callback;
@@ -51,7 +50,7 @@ public class CardContainer {
 
     private void deleteViewFromSwipeDeck() {
         parent.removeView(view);
-        parent.clearBuffer();
+        parent.removeFromBuffer(this);
     }
 
     public void setSwipeEnabled(boolean enabled) {

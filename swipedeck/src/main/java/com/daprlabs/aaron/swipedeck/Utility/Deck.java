@@ -35,6 +35,9 @@ public class Deck<T extends CardContainer> {
     public void removeFront(){
         removeFirst();
     }
+    public void removeBack(){
+        removeLast();
+    }
 
     public T get(int pos){
         return internal.get(pos);

@@ -45,13 +45,13 @@ public class MainActivity extends AppCompatActivity {
         }
         cardStack.setCallback(new SwipeDeck.SwipeDeckCallback() {
             @Override
-            public void cardSwipedLeft(int positionInAdapter) {
-                Log.i("MainActivity", "card was swiped left, position in adapter: " + positionInAdapter);
+            public void cardSwipedLeft(long stableId) {
+                Log.i("MainActivity", "card was swiped left, position in adapter: " + stableId);
             }
 
             @Override
-            public void cardSwipedRight(int positoinInAdapter) {
-                Log.i("MainActivity", "card was swiped right, position in adapter: " + positoinInAdapter);
+            public void cardSwipedRight(long stableId) {
+                Log.i("MainActivity", "card was swiped right, position in adapter: " + stableId);
 
             }
         });
