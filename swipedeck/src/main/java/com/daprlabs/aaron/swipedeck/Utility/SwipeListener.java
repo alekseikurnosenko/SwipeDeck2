@@ -75,10 +75,6 @@ public class SwipeListener implements View.OnTouchListener {
 
             case MotionEvent.ACTION_MOVE:
                 //gesture is in progress
-                // Check whether we are allowed to drag this card
-                if (!callback.isDragEnabled()) {
-                    return false;
-                }
 
                 final int pointerIndex = event.findPointerIndex(mActivePointerId);
                 //Log.i("pointer index: " , Integer.toString(pointerIndex));
@@ -93,6 +89,18 @@ public class SwipeListener implements View.OnTouchListener {
                 final float dx = xMove - initialXPress;
                 final float dy = yMove - initialYPress;
 
+                //in this circumstance consider the motion a click
+                if (Math.abs(dx + dy) > 5) {
+                    click = false;
+                }
+
+                // Check whether we are allowed to drag this card
+                // We don't want to do this at the start of the branch, as we need to check whether we exceeded
+                // moving threshold first
+                if (!callback.isDragEnabled()) {
+                    return false;
+                }
+
                 Log.d("X:" , "" + v.getX());
 
                 //throw away the move in this case as it seems to be wrong
@@ -104,9 +112,6 @@ public class SwipeListener implements View.OnTouchListener {
                 //calc rotation here
                 float posX = card.getX() + dx;
                 float posY = card.getY() + dy;
-
-                //in this circumstance consider the motion a click
-                if (Math.abs(dx + dy) > 5) click = false;
 
                 card.setX(posX);
                 card.setY(posY);
