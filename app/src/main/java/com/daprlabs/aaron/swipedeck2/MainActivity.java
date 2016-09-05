@@ -1,7 +1,11 @@
 package com.daprlabs.aaron.swipedeck2;
 
+import com.daprlabs.aaron.swipedeck.SwipeDeck;
+import com.squareup.picasso.Picasso;
+
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,9 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.daprlabs.aaron.swipedeck.SwipeDeck;
-import com.squareup.picasso.Picasso;
+import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,19 +27,16 @@ public class MainActivity extends AppCompatActivity {
     private Context context = this;
     private SwipeDeckAdapter adapter;
     private ArrayList<String> testData;
+    private ViewFlipper flipper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         cardStack = (SwipeDeck) findViewById(R.id.swipe_deck);
+        flipper = (ViewFlipper) findViewById(R.id.flipper);
 
         testData = new ArrayList<>();
-        testData.add("0");
-        testData.add("1");
-        testData.add("2");
-        testData.add("3");
-        testData.add("4");
 
         adapter = new SwipeDeckAdapter(testData, this);
         if(cardStack != null){
@@ -79,9 +78,22 @@ public class MainActivity extends AppCompatActivity {
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                testData.add("a sample string.");
-//                adapter.notifyDataSetChanged();
-                cardStack.unSwipeCard();
+                testData.add("0");
+                testData.add("1");
+                testData.add("2");
+                testData.add("3");
+                testData.add("4");
+                // Show swipe deck
+                flipper.setDisplayedChild(1);
+                // With this one, app would crash with SIGSEGV as soon as we start to drag card
+                // adapter.notifyDataSetChanged();
+                // With this one, it's ok
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                });
             }
         });
 
