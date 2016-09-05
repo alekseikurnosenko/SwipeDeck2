@@ -1,5 +1,8 @@
 package com.daprlabs.aaron.swipedeck;
 
+import com.daprlabs.aaron.swipedeck.Utility.Deck;
+import com.daprlabs.aaron.swipedeck.Utility.SwipeCallback;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,13 +13,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
 import android.widget.Adapter;
 import android.widget.FrameLayout;
-
-import com.daprlabs.aaron.swipedeck.Utility.Deck;
-import com.daprlabs.aaron.swipedeck.Utility.RxBus;
-import com.daprlabs.aaron.swipedeck.Utility.SwipeCallback;
 
 import java.util.ArrayList;
 
@@ -183,46 +181,7 @@ public class SwipeDeck extends FrameLayout {
             newBottomChild.setY(getPaddingTop());
             final long viewId = mAdapter.getItemId(adapterIndex);
 
-            CardContainer card = new CardContainer(newBottomChild, this, new SwipeCallback() {
-                @Override
-                public void cardSwipedLeft(View card) {
-                    Log.d(TAG, "card swiped left");
-                    if (!(deck.getFront().getCard() == card)) {
-                        Log.e("SWIPE ERROR: ", "card on top of deck not equal to card swiped");
-                    }
-                    deck.removeFront();
-                    if (callback != null) {
-                        callback.cardSwipedLeft(viewId);
-                    }
-                }
-
-                @Override
-                public void cardSwipedRight(View card) {
-                    Log.d(TAG, "card swiped right");
-                    if (!(deck.getFront().getCard() == card)) {
-                        Log.e("SWIPE ERROR: ", "card on top of deck not equal to card swiped");
-                    }
-                    deck.removeFront();
-                    if (callback != null) {
-                        callback.cardSwipedRight(viewId);
-                    }
-                }
-
-                @Override
-                public void cardOffScreen(View card) {
-
-                }
-
-                @Override
-                public void cardActionDown() {
-
-                }
-
-                @Override
-                public void cardActionUp() {
-
-                }
-            });
+            CardContainer card = new CardContainer(newBottomChild, this, new CardContainerCallback(viewId));
 
             card.setPositionWithinAdapter(adapterIndex);
 
@@ -262,46 +221,7 @@ public class SwipeDeck extends FrameLayout {
 
             final long viewId = mAdapter.getItemId(positionOfLastCard);
 
-            CardContainer card = new CardContainer(newBottomChild, this, new SwipeCallback() {
-                @Override
-                public void cardSwipedLeft(View card) {
-                    Log.d(TAG, "card swiped left");
-                    if (!(deck.getFront().getCard() == card)) {
-                        Log.e("SWIPE ERROR: ", "card on top of deck not equal to card swiped");
-                    }
-                    deck.removeFront();
-                    if (callback != null) {
-                        callback.cardSwipedLeft(viewId);
-                    }
-                }
-
-                @Override
-                public void cardSwipedRight(View card) {
-                    Log.d(TAG, "card swiped right");
-                    if (!(deck.getFront().getCard() == card)) {
-                        Log.e("SWIPE ERROR: ", "card on top of deck not equal to card swiped");
-                    }
-                    deck.removeFront();
-                    if (callback != null) {
-                        callback.cardSwipedRight(viewId);
-                    }
-                }
-
-                @Override
-                public void cardOffScreen(View card) {
-
-                }
-
-                @Override
-                public void cardActionDown() {
-
-                }
-
-                @Override
-                public void cardActionUp() {
-
-                }
-            });
+            CardContainer card = new CardContainer(newBottomChild, this, new CardContainerCallback(viewId));
 
             if (leftImageResource != 0) {
                 card.setLeftImageResource(leftImageResource);
@@ -427,9 +347,76 @@ public class SwipeDeck extends FrameLayout {
     }
 
     public interface SwipeDeckCallback {
-        void cardSwipedLeft(long stableId);
+        void cardSwipedLeft(long itemId);
 
-        void cardSwipedRight(long stableId);
+        void cardSwipedRight(long itemId);
+
+        /**
+         * Check whether we can start dragging view with provided id.
+         *
+         * @param itemId id of the card returned by adapter's {@link Adapter#getItemId(int)}
+         * @return true if we can start dragging view, false otherwise
+         */
+        boolean isDragEnabled(long itemId);
+    }
+
+    private class CardContainerCallback implements SwipeCallback {
+
+        private final long viewId;
+
+        public CardContainerCallback(long viewId) {
+            this.viewId = viewId;
+        }
+
+        @Override
+        public void cardSwipedLeft(View card) {
+            Log.d(TAG, "card swiped left");
+            if (!(deck.getFront().getCard() == card)) {
+                Log.e("SWIPE ERROR: ", "card on top of deck not equal to card swiped");
+            }
+            deck.removeFront();
+            if (callback != null) {
+                callback.cardSwipedLeft(viewId);
+            }
+        }
+
+        @Override
+        public void cardSwipedRight(View card) {
+            Log.d(TAG, "card swiped right");
+            if (!(deck.getFront().getCard() == card)) {
+                Log.e("SWIPE ERROR: ", "card on top of deck not equal to card swiped");
+            }
+            deck.removeFront();
+            if (callback != null) {
+                callback.cardSwipedRight(viewId);
+            }
+        }
+
+        @Override
+        public boolean isDragEnabled() {
+            if (callback != null) {
+                return callback.isDragEnabled(viewId);
+            } else {
+                // Enabled by default, drag would depend on SWIPE_ENABLED
+                return true;
+            }
+        }
+
+        @Override
+        public void cardOffScreen(View card) {
+
+        }
+
+        @Override
+        public void cardActionDown() {
+
+        }
+
+        @Override
+        public void cardActionUp() {
+
+        }
+
     }
 }
 

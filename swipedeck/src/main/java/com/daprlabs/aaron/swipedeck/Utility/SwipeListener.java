@@ -1,5 +1,7 @@
 package com.daprlabs.aaron.swipedeck.Utility;
 
+import com.daprlabs.aaron.swipedeck.SwipeDeck;
+
 import android.animation.Animator;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -7,10 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.view.animation.OvershootInterpolator;
-
-import com.daprlabs.aaron.swipedeck.SwipeDeck;
-
-import java.util.ArrayList;
 
 /**
  * Created by aaron on 4/12/2015.
@@ -34,26 +32,6 @@ public class SwipeListener implements View.OnTouchListener {
     private boolean deactivated;
     private View rightView;
     private View leftView;
-
-
-    //new animation vars
-    private ArrayList<View> underCards;
-    private int cardSpacing;
-    private int xScale;
-    private String TAG = "SwipeListener";
-
-
-    public SwipeListener(View card, final SwipeCallback callback, int initialX, int initialY, float rotation, float opacityEnd) {
-        this.card = card;
-        this.initialX = initialX;
-        this.initialY = initialY;
-        this.callback = callback;
-        this.parent = (ViewGroup) card.getParent();
-        this.parentWidth = parent.getWidth();
-        this.ROTATION_DEGREES = rotation;
-        this.OPACITY_END = opacityEnd;
-        this.paddingLeft = ((ViewGroup) card.getParent()).getPaddingLeft();
-    }
 
     public SwipeListener(View card, final SwipeCallback callback, int initialX, int initialY, float rotation, float opacityEnd, SwipeDeck parent) {
         this.card = card;
@@ -97,6 +75,10 @@ public class SwipeListener implements View.OnTouchListener {
 
             case MotionEvent.ACTION_MOVE:
                 //gesture is in progress
+                // Check whether we are allowed to drag this card
+                if (!callback.isDragEnabled()) {
+                    return false;
+                }
 
                 final int pointerIndex = event.findPointerIndex(mActivePointerId);
                 //Log.i("pointer index: " , Integer.toString(pointerIndex));
