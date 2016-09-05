@@ -58,39 +58,36 @@ public class SwipeDeck extends FrameLayout {
         RENDER_ABOVE = a.getBoolean(R.styleable.SwipeDeck2_render_above, true);
         SWIPE_ENABLED = a.getBoolean(R.styleable.SwipeDeck2_swipe_enabled, true);
 
-        deck = new Deck<>(new Deck.ListEventListener() {
+        deck = new Deck<>(new Deck.DeckEventListener() {
+
             @Override
-            public void itemAdded(Object object, int position) {
-                //let the card container know it's own position within the deck
-                deck.get(position).setPositionWithinViewGroup(position);
-                if (position == 0) {
-                    deck.get(0).setSwipeEnabled(true);
-                }
+            public void itemAddedFront(Object item) {
+                deck.getFront().setSwipeEnabled(true);
                 renderDeck();
             }
 
             @Override
-            public void itemRemoved(Object object) {
-                // move view into the buffer while it's animation completes and cleanup is done
-                buffer = (CardContainer) object;
+            public void itemAddedBack(Object item) {
+                deck.getFront().setSwipeEnabled(true);
+                renderDeck();
+            }
+
+            @Override
+            public void itemRemovedFront(Object item) {
+                buffer = (CardContainer) item;
                 //enable swipe in the next cardContainer
-                int index = 0;
-                if (index < deck.size()) {
-                    deck.get(index).setSwipeEnabled(true);
+                if(deck.size() > 0) {
+                    deck.getFront().setSwipeEnabled(true);
                 }
                 buffer.cleanupAndRemoveView();
                 //pull in the next view (if available)
-
                 addNextView();
                 renderDeck();
             }
 
             @Override
-            public void itemPositionChanged(Object object, int position) {
-                removeAllViews();
-                //let the card container know it's own position within the deck
-                deck.get(position).setPositionWithinViewGroup(position);
-                renderDeck();
+            public void itemRemovedBack(Object item) {
+
             }
         });
 
@@ -182,25 +179,19 @@ public class SwipeDeck extends FrameLayout {
                 @Override
                 public void cardSwipedLeft(View card) {
                     Log.d(TAG, "card swiped left");
-
-                    //remove the card container containing 'card'
-                    for (int i = 0; i < deck.size(); ++i) {
-                        if (deck.get(i).getCard() == card) {
-                            deck.remove(deck.get(i));
-                            break;
-                        }
+                    if(!(deck.getFront().getCard() == card)){
+                       Log.e("SWIPE ERROR: ", "card on top of deck not equal to card swiped");
                     }
+                    deck.removeFront();
                 }
 
                 @Override
                 public void cardSwipedRight(View card) {
                     Log.d(TAG, "card swiped right");
-                    for (int i = 0; i < deck.size(); ++i) {
-                        if (deck.get(i).getCard() == card) {
-                            deck.remove(deck.get(i));
-                            break;
-                        }
+                    if(!(deck.getFront().getCard() == card)){
+                        Log.e("SWIPE ERROR: ", "card on top of deck not equal to card swiped");
                     }
+                    deck.removeFront();
                 }
 
                 @Override
@@ -228,75 +219,8 @@ public class SwipeDeck extends FrameLayout {
             if (mHasStableIds) {
                 card.setId(mAdapter.getItemId(adapterIndex));
             }
-            deck.add(card);
+            deck.addBack(card);
             adapterIndex++;
-        }
-    }
-
-    private void addLastView() {
-
-        int lastCardIndex = adapterIndex - deck.size() - 1;
-
-        if (lastCardIndex >= 0) {
-            View newBottomChild = mAdapter.getView(lastCardIndex, null, this);
-            newBottomChild.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            //todo: i'm setting the card to invisible initially and making it visible when i animate
-            //later
-            newBottomChild.setAlpha(0);
-            newBottomChild.setY(getPaddingTop());
-
-            CardContainer card = new CardContainer(newBottomChild, this, new SwipeCallback() {
-                @Override
-                public void cardSwipedLeft(View card) {
-                    Log.d(TAG, "card swiped left");
-
-                    //remove the card container containing 'card'
-                    for (int i = 0; i < deck.size(); ++i) {
-                        if (deck.get(i).getCard() == card) {
-                            deck.remove(deck.get(i));
-                            break;
-                        }
-                    }
-                }
-
-                @Override
-                public void cardSwipedRight(View card) {
-                    Log.d(TAG, "card swiped right");
-                    for (int i = 0; i < deck.size(); ++i) {
-                        if (deck.get(i).getCard() == card) {
-                            deck.remove(deck.get(i));
-                            break;
-                        }
-                    }
-                }
-
-                @Override
-                public void cardOffScreen(View card) {
-
-                }
-
-                @Override
-                public void cardActionDown() {
-
-                }
-
-                @Override
-                public void cardActionUp() {
-
-                }
-            });
-
-            if (leftImageResource != 0) {
-                card.setLeftImageResource(leftImageResource);
-            }
-            if (rightImageResource != 0) {
-                card.setRightImageResource(rightImageResource);
-            }
-            if (mHasStableIds) {
-                card.setId(mAdapter.getItemId(adapterIndex));
-            }
-            //add card to front
-            deck.add(0, card);
         }
     }
 
@@ -353,14 +277,14 @@ public class SwipeDeck extends FrameLayout {
     public void swipeTopCardLeft(int duration) {
         if (deck.size() > 0) {
             deck.get(0).getSwipeListener().animateOffScreenLeft(duration);
-            deck.remove(0);
+            deck.removeFront();
         }
     }
 
     public void swipeTopCardRight(int duration) {
         if (deck.size() > 0) {
             deck.get(0).getSwipeListener().animateOffScreenRight(duration);
-            deck.remove(0);
+            deck.removeFront();
         }
     }
 
@@ -369,10 +293,6 @@ public class SwipeDeck extends FrameLayout {
     }
     public int getAdapterIndex(){
         return this.adapterIndex;
-    }
-
-    public void goBackCard(){
-        addLastView();
     }
 
     public void clearBuffer() {

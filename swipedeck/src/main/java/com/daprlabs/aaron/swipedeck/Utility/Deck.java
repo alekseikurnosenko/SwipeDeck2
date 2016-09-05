@@ -1,198 +1,109 @@
 package com.daprlabs.aaron.swipedeck.Utility;
 
-import android.support.annotation.NonNull;
+import com.daprlabs.aaron.swipedeck.CardContainer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.LinkedList;
 
 /**
  * Created by aaron on 21/08/2016.
  */
-public class Deck<T> implements List<T> {
+public class Deck<T extends CardContainer> {
 
-    private ArrayList<T> internalList = new ArrayList<>();
+    private LinkedList<T> internal = new LinkedList<>();
+    private DeckEventListener listener;
 
-
-    private ListEventListener listener;
-
-    public Deck(ListEventListener listener) {
+    public Deck(DeckEventListener listener){
         this.listener = listener;
     }
 
-    @Override
-    public void add(int location, T object) {
-        internalList.add(location, object);
-        listener.itemAdded(object, location);
+    //public facing methods
+    public void addBack(T t){
+        this.addLast(t);
+    }
+    public void addFront(T t){
+        this.addFirst(t);
     }
 
-    //reactive
-    @Override
-    public boolean add(T object) {
-        T itemToBeAdded = (T) object;
-        boolean added = internalList.add(itemToBeAdded);
-        listener.itemAdded(object, internalList.indexOf(itemToBeAdded));
-
-        return added;
+    public T getBack(){
+        return getLast();
     }
 
-    @Override
-    public boolean addAll(int location, Collection<? extends T> collection) {
-        return internalList.addAll(location, collection);
+    public T getFront(){
+        return getFirst();
     }
 
-    @Override
-    public boolean addAll(Collection<? extends T> collection) {
-        return internalList.addAll(collection);
+    public void removeFront(){
+        removeFirst();
     }
 
-    //reacts
-    @Override
-    public void clear() {
-        for(T t : internalList){
-            listener.itemRemoved(t);
+    public T get(int pos){
+        return internal.get(pos);
+    }
+
+    public int size(){
+        return internal.size();
+    }
+
+    /**
+     * clear removes cards progressively from the front
+     */
+    public void clear(){
+        while(size() > 0){
+            removeFirst();
         }
-        internalList.clear();
     }
 
-    //
-    @Override
-    public boolean contains(Object object) {
-        return internalList.contains(object);
-    }
-
-    //
-    @Override
-    public boolean containsAll(Collection<?> collection) {
-        return internalList.containsAll(collection);
-    }
-
-    //
-    @Override
-    public T get(int location) {
-        return internalList.get(location);
-    }
-
-    //
-    @Override
-    public int indexOf(Object object) {
-        return internalList.indexOf(object);
-    }
-
-    //
-    @Override
-    public boolean isEmpty() {
-        return internalList.isEmpty();
-    }
-
-    //
-    @NonNull
-    @Override
-    public Iterator<T> iterator() {
-        return internalList.iterator();
-    }
-
-    //
-    @Override
-    public int lastIndexOf(Object object) {
-        return internalList.lastIndexOf(object);
-    }
-
-    //?
-    @Override
-    public ListIterator<T> listIterator() {
-        return internalList.listIterator();
-    }
-
-    //?
-    @NonNull
-    @Override
-    public ListIterator<T> listIterator(int location) {
-        return internalList.listIterator(location);
-    }
-
-    //reactive, will fail if index oob
-    @Override
-    public T remove(int location) {
-        T itemToRemove = internalList.get(location);
-        listener.itemRemoved(itemToRemove);
-        internalList.remove(itemToRemove);
-
-        //if something was removed let the listener know some items changed position
-        for (int i = location; i < internalList.size(); ++i) {
-            listener.itemPositionChanged(internalList.get(i), i);
+    //makes items in the deck aware of their positions in the deck
+    private void updateItemPositions(){
+        for(int i=0; i<internal.size(); ++i){
+            internal.get(i).setPositionWithinViewGroup(i);
         }
-        return itemToRemove;
     }
 
-    //reactive, may need to check for object in future
-    //this honestly may need debugging, the logic seems sound atm though.
-    @Override
-    public boolean remove(Object object) {
-        T itemToRemove = (T) object;
-        int index = internalList.indexOf(itemToRemove);
-        boolean removed = internalList.remove(itemToRemove);
+    private void addFirst(T t) {
+        internal.addFirst(t);
+        updateItemPositions();
+        listener.itemAddedFront(t);
+    }
 
-        if(removed){
-            for(int i = index; i<internalList.size(); ++i){
-                listener.itemPositionChanged(internalList.get(i), i);
-            }
-            listener.itemRemoved(object);
+    private void addLast(T t) {
+        internal.addLast(t);
+        updateItemPositions();
+        listener.itemAddedBack(t);
+    }
+
+    private T removeFirst() {
+        T toRemove = internal.removeFirst();
+        updateItemPositions();
+        listener.itemRemovedFront(toRemove);
+        return toRemove;
+    }
+
+    private T removeLast() {
+        T toRemove = internal.removeLast();
+        updateItemPositions();
+        listener.itemRemovedBack(toRemove);
+        return toRemove;
+    }
+
+    private T getFirst() {
+        T getFirst = null;
+        if(internal.size()>0){
+            getFirst = internal.getFirst();
         }
-        return removed;
+        return getFirst;
     }
 
-    //not supported yet
-    @Override
-    public boolean removeAll(Collection<?> collection) {
-        try {
-            throw new UnsupportedOperationException("operation not yet supported!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //return internalList.removeAll(collection);
-        return false;
+    private T getLast() {
+        T getLast = internal.getLast();
+        return getLast;
     }
 
-    @Override
-    public boolean retainAll(Collection<?> collection) {
-        return internalList.retainAll(collection);
-    }
 
-    @Override
-    public T set(int location, T object) {
-        return internalList.set(location, object);
-    }
-
-    @Override
-    public int size() {
-        return internalList.size();
-    }
-
-    @NonNull
-    @Override
-    public List<T> subList(int start, int end) {
-        return subList(start, end);
-    }
-
-    @NonNull
-    @Override
-    public Object[] toArray() {
-        return internalList.toArray();
-    }
-
-    @NonNull
-    @Override
-    public <T1> T1[] toArray(T1[] array) {
-        return internalList.toArray(array);
-    }
-
-    public interface ListEventListener {
-        void itemAdded(Object object, int position);
-        void itemRemoved(Object object);
-        void itemPositionChanged(Object object, int position);
-
+    public interface DeckEventListener {
+        void itemAddedFront(Object item);
+        void itemAddedBack(Object item);
+        void itemRemovedFront(Object item);
+        void itemRemovedBack(Object item);
     }
 }
