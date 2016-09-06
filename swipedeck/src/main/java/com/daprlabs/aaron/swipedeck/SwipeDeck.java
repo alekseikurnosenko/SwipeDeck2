@@ -256,9 +256,9 @@ public class SwipeDeck extends FrameLayout {
         }
         //if there's still a card animating in the buffer, make sure it's re added after removing all views
         if (buffer != null) {
-            // cards in buffer go from older to newer
+            // cards in buffer go from older ones to newer
             // in our deck, newer cards are placed below older cards
-            // so we need to start with new cards, and place older atop
+            // we need to start with new cards, so older cards would be above them
             for (int i = buffer.size() - 1; i >= 0; i--) {
                 View card = buffer.get(i).getCard();
                 ViewGroup.LayoutParams params = card.getLayoutParams();
