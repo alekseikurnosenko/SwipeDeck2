@@ -1,10 +1,9 @@
 package com.daprlabs.aaron.swipedeck;
 
-import android.view.View;
-
-import com.daprlabs.aaron.swipedeck.Utility.RxBus;
 import com.daprlabs.aaron.swipedeck.Utility.SwipeCallback;
 import com.daprlabs.aaron.swipedeck.Utility.SwipeListener;
+
+import android.view.View;
 
 /**
  * Created by aaron on 21/08/2016.
@@ -18,6 +17,7 @@ public class CardContainer {
     private SwipeCallback callback;
     private SwipeDeck parent;
     private long id;
+    private int swipeDuration = SwipeDeck.ANIMATION_DURATION;
 
     public CardContainer(View view, SwipeDeck parent, SwipeCallback callback) {
         this.view = view;
@@ -46,7 +46,7 @@ public class CardContainer {
             public void run() {
                 deleteViewFromSwipeDeck();
             }
-        }, SwipeDeck.ANIMATION_DURATION);
+        }, swipeDuration);
     }
 
     private void deleteViewFromSwipeDeck() {
@@ -63,10 +63,6 @@ public class CardContainer {
         }
     }
 
-    public SwipeListener getSwipeListener() {
-        return swipeListener;
-    }
-
     public void setLeftImageResource(int leftImageResource) {
         View left = view.findViewById(leftImageResource);
         left.setAlpha(0);
@@ -81,7 +77,15 @@ public class CardContainer {
     }
 
     public void setupSwipeListener() {
-        this.swipeListener = new SwipeListener(view, callback, parent.getPaddingLeft(), parent.getPaddingTop(), parent.ROTATION_DEGREES, parent.OPACITY_END, parent);
+        this.swipeListener = new SwipeListener(
+                view,
+                callback,
+                parent.getPaddingLeft(),
+                parent.getPaddingTop(),
+                parent.ROTATION_DEGREES,
+                parent.OPACITY_END,
+                parent
+        );
     }
 
     public long getId() {
@@ -92,11 +96,25 @@ public class CardContainer {
         this.id = id;
     }
 
-    public void setPositionWithinAdapter(int position){
+    public void setPositionWithinAdapter(int position) {
         this.positionWithinAdapter = position;
     }
 
-    public int getPositionWithinAdapter(){
+    public int getPositionWithinAdapter() {
         return positionWithinAdapter;
+    }
+
+    public void swipeCardLeft(int duration) {
+        // Remember how long card would be animating
+        swipeDuration = duration;
+        // Disable touch events
+        setSwipeEnabled(false);
+        swipeListener.swipeCardLeft(duration);
+    }
+
+    public void swipeCardRight(int duration) {
+        swipeDuration = duration;
+        setSwipeEnabled(false);
+        swipeListener.swipeCardRight(duration);
     }
 }
