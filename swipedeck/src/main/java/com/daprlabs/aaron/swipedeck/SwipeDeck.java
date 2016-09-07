@@ -276,16 +276,18 @@ public class SwipeDeck extends FrameLayout {
     }
 
     private void positionCards() {
-
         setZTranslations();
         for (int i = 0; i < deck.size(); ++i) {
-            View card = deck.get(i).getCard();
-            float offset = (int) (deck.get(i).getPositionWithinViewGroup() * CARD_SPACING);
-            card.animate()
-                    .setDuration(ANIMATION_DURATION)
-                    .y(getPaddingTop() + offset)
-                    .alpha(1.0f);
+            animateCardPosition(deck.get(i).getCard(), deck.get(i).getPositionWithinViewGroup());
         }
+    }
+
+    protected void animateCardPosition(View card, int position) {
+        float offset = (int) (position * CARD_SPACING);
+        card.animate()
+                .setDuration(ANIMATION_DURATION)
+                .y(getPaddingTop() + offset)
+                .alpha(1.0f);
     }
 
     public void setCallback(SwipeDeckCallback callback) {
