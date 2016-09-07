@@ -23,7 +23,7 @@ import java.util.ArrayList;
  */
 public class SwipeDeck extends FrameLayout {
 
-    private static final String TAG = "SwipeDeck MainActivity";
+    private static final String TAG = "SwipeDeck";
     private int NUMBER_OF_SIMULTANEOUS_CARDS;
     public float OPACITY_END;
     public float ROTATION_DEGREES;
@@ -256,8 +256,11 @@ public class SwipeDeck extends FrameLayout {
         }
         //if there's still a card animating in the buffer, make sure it's re added after removing all views
         if (buffer != null) {
-            for (CardContainer c : buffer) {
-                View card = c.getCard();
+            // cards in buffer go from older ones to newer
+            // in our deck, newer cards are placed below older cards
+            // we need to start with new cards, so older cards would be above them
+            for (int i = buffer.size() - 1; i >= 0; i--) {
+                View card = buffer.get(i).getCard();
                 ViewGroup.LayoutParams params = card.getLayoutParams();
 
                 if (params == null) {
@@ -289,21 +292,29 @@ public class SwipeDeck extends FrameLayout {
         this.callback = callback;
     }
 
+    /**
+     * Swipe top card to the left side.
+     *
+     * @param duration animation duration in milliseconds
+     */
     public void swipeTopCardLeft(int duration) {
         if (deck.size() > 0) {
-            deck.get(0).getSwipeListener().swipeCardLeft(duration);
+            deck.get(0).swipeCardLeft(duration);
             if (callback != null) {
                 callback.cardSwipedLeft(deck.get(0).getId());
             }
             deck.removeFront();
         }
-
-
     }
 
+    /**
+     * Swipe card to the right side.
+     *
+     * @param duration animation duration in milliseconds
+     */
     public void swipeTopCardRight(int duration) {
         if (deck.size() > 0) {
-            deck.get(0).getSwipeListener().swipeCardRight(duration);
+            deck.get(0).swipeCardRight(duration);
             if (callback != null) {
                 callback.cardSwipedRight(deck.get(0).getId());
             }

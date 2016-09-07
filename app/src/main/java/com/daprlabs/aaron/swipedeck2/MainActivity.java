@@ -36,11 +36,9 @@ public class MainActivity extends AppCompatActivity {
         dragCheckbox = (CheckBox) findViewById(R.id.checkbox_drag);
 
         testData = new ArrayList<>();
-        testData.add("0");
-        testData.add("1");
-        testData.add("2");
-        testData.add("3");
-        testData.add("4");
+        for (int i = 0; i < 10; i++) {
+            testData.add(String.valueOf(i));
+        }
 
         adapter = new SwipeDeckAdapter(testData, this);
         if(cardStack != null){
@@ -71,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cardStack.swipeTopCardLeft(180);
+                cardStack.swipeTopCardLeft(500);
 
             }
         });

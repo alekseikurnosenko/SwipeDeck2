@@ -33,7 +33,8 @@ public class SwipeListener implements View.OnTouchListener {
     private View rightView;
     private View leftView;
 
-    public SwipeListener(View card, final SwipeCallback callback, int initialX, int initialY, float rotation, float opacityEnd, SwipeDeck parent) {
+    public SwipeListener(View card, final SwipeCallback callback, int initialX, int initialY, float rotation,
+                         float opacityEnd, SwipeDeck parent) {
         this.card = card;
         this.initialX = initialX;
         this.initialY = initialY;
@@ -49,7 +50,9 @@ public class SwipeListener implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (deactivated) return false;
+        if (deactivated) {
+            return false;
+        }
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
             case MotionEvent.ACTION_DOWN:
@@ -65,7 +68,7 @@ public class SwipeListener implements View.OnTouchListener {
                 x = event.getX();
                 y = event.getY();
 
-                if(event.findPointerIndex(mActivePointerId) == 0) {
+                if (event.findPointerIndex(mActivePointerId) == 0) {
                     callback.cardActionDown();
                 }
 
@@ -78,7 +81,7 @@ public class SwipeListener implements View.OnTouchListener {
 
                 final int pointerIndex = event.findPointerIndex(mActivePointerId);
                 //Log.i("pointer index: " , Integer.toString(pointerIndex));
-                if(pointerIndex < 0 || pointerIndex > 0 ){
+                if (pointerIndex < 0 || pointerIndex > 0) {
                     break;
                 }
 
@@ -101,11 +104,11 @@ public class SwipeListener implements View.OnTouchListener {
                     return false;
                 }
 
-                Log.d("X:" , "" + v.getX());
+                Log.d("X:", "" + v.getX());
 
                 //throw away the move in this case as it seems to be wrong
                 //TODO: figure out why this is the case
-                if((int)initialXPress == 0 && (int) initialYPress == 0){
+                if ((int) initialXPress == 0 && (int) initialYPress == 0) {
                     //makes sure the pointer is valid
                     break;
                 }
@@ -122,7 +125,7 @@ public class SwipeListener implements View.OnTouchListener {
                 float rotation = ROTATION_DEGREES * 2.f * distobjectX / parentWidth;
                 card.setRotation(rotation);
 
-                if (rightView != null && leftView != null){
+                if (rightView != null && leftView != null) {
                     //set alpha of left and right image
                     float alpha = (((posX - paddingLeft) / (parentWidth * OPACITY_END)));
                     //float alpha = (((posX - paddingLeft) / parentWidth) * ALPHA_MAGNITUDE );
@@ -139,13 +142,15 @@ public class SwipeListener implements View.OnTouchListener {
                 //card position
                 checkCardForEvent();
 
-                if(event.findPointerIndex(mActivePointerId) == 0) {
+                if (event.findPointerIndex(mActivePointerId) == 0) {
                     callback.cardActionUp();
                 }
                 //check if this is a click event and then perform a click
                 //this is a workaround, android doesn't play well with multiple listeners
 
-                if (click) v.performClick();
+                if (click) {
+                    v.performClick();
+                }
                 //if(click) return false;
 
                 break;
@@ -174,7 +179,7 @@ public class SwipeListener implements View.OnTouchListener {
 
                         @Override
                         public void onAnimationCancel(Animator animation) {
-                            Log.d("SwipeListener" , "Animation Cancelled");
+                            Log.d("SwipeListener", "Animation Cancelled");
                         }
 
                         @Override
@@ -225,8 +230,12 @@ public class SwipeListener implements View.OnTouchListener {
     }
 
     private ViewPropertyAnimator resetCardPosition() {
-        if(rightView!=null)rightView.setAlpha(0);
-        if(leftView!=null)leftView.setAlpha(0);
+        if (rightView != null) {
+            rightView.setAlpha(0);
+        }
+        if (leftView != null) {
+            leftView.setAlpha(0);
+        }
 
         //todo: figure out why i have to set translationX to 0
         return card.animate()
@@ -240,7 +249,7 @@ public class SwipeListener implements View.OnTouchListener {
 
     private ViewPropertyAnimator animateOffScreenLeft(int duration) {
         return card.animate()
-                .setDuration(SwipeDeck.ANIMATION_DURATION)
+                .setDuration(duration)
                 .x(-(parentWidth))
                 .y(0)
                 .rotation(-30);
@@ -248,17 +257,17 @@ public class SwipeListener implements View.OnTouchListener {
 
     private ViewPropertyAnimator animateOffScreenRight(int duration) {
         return card.animate()
-                .setDuration(SwipeDeck.ANIMATION_DURATION)
+                .setDuration(duration)
                 .x(parentWidth * 2)
                 .y(0)
                 .rotation(30);
     }
 
-    public void swipeCardLeft(int duration){
+    public void swipeCardLeft(int duration) {
         animateOffScreenLeft(duration);
     }
 
-    public void swipeCardRight(int duration){
+    public void swipeCardRight(int duration) {
         animateOffScreenRight(duration);
     }
 
@@ -271,7 +280,7 @@ public class SwipeListener implements View.OnTouchListener {
     }
 
     //animate under cards by 0 - 100% of card spacing
-    private void animateUnderCards(float xVal, int cardWidth){
+    private void animateUnderCards(float xVal, int cardWidth) {
         // adjust xVal to middle of card instead of left
         //parent width 1080
         float xValMid = xVal + (cardWidth / 2);
