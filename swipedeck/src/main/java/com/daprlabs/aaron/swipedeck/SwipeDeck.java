@@ -130,6 +130,7 @@ public class SwipeDeck extends FrameLayout {
                 view.setLayoutParams(params);
                 addViewInLayout(view, -1, params, true);
             }
+            setZTranslations();
         }
     }
 
