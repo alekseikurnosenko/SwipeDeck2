@@ -11,6 +11,8 @@ import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 public class SwipeDeck extends FrameLayout {
 
     private static final String TAG = "SwipeDeck";
+    private final int previewLayoutId;
     private int NUMBER_OF_SIMULTANEOUS_CARDS;
     public float OPACITY_END;
     public float ROTATION_DEGREES;
@@ -38,6 +41,7 @@ public class SwipeDeck extends FrameLayout {
     private Deck<CardContainer> deck;
     private SwipeDeckCallback callback;
     private ArrayList<CardContainer> buffer = new ArrayList<>();
+
 
     private int leftImageResource;
     private int rightImageResource;
@@ -57,6 +61,7 @@ public class SwipeDeck extends FrameLayout {
         CARD_SPACING = a.getDimension(R.styleable.SwipeDeck2_card_spacing, 15f);
         RENDER_ABOVE = a.getBoolean(R.styleable.SwipeDeck2_render_above, true);
         SWIPE_ENABLED = a.getBoolean(R.styleable.SwipeDeck2_swipe_enabled, true);
+        previewLayoutId = a.getResourceId(R.styleable.SwipeDeck2_preview_layout, -1);
 
         deck = new Deck<>(new Deck.DeckEventListener() {
 
@@ -107,7 +112,25 @@ public class SwipeDeck extends FrameLayout {
         if (RENDER_ABOVE) {
             ViewCompat.setTranslationZ(this, Float.MAX_VALUE);
         }//todo: make an else here possibly
+    }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (isInEditMode() && previewLayoutId != -1) {
+            for (int i = NUMBER_OF_SIMULTANEOUS_CARDS - 1; i >= 0; i--) {
+                View view = LayoutInflater.from(getContext()).inflate(previewLayoutId, this, false);
+                FrameLayout.LayoutParams params = (LayoutParams) view.getLayoutParams();
+
+                int offset = (int) (i * CARD_SPACING);
+                // All cards are placed in absolute coordinates, so disable gravity if we have any
+                params.gravity = Gravity.NO_GRAVITY;
+                // We can't user translations here, for some reason it's not rendered properly in preview
+                params.topMargin = offset;
+                view.setLayoutParams(params);
+                addViewInLayout(view, -1, params, true);
+            }
+        }
     }
 
     public void setAdapter(final Adapter adapter) {
@@ -156,6 +179,10 @@ public class SwipeDeck extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
+
+        if (isInEditMode()) {
+            return;
+        }
 
         // if we don't have an adapter, we don't need to do anything
         if (mAdapter == null || mAdapter.getCount() == 0) {

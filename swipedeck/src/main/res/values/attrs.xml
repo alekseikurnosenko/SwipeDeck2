@@ -7,5 +7,6 @@
         <attr name="card_spacing" format="dimension"/>
         <attr name="render_above" format="boolean"/>
         <attr name="swipe_enabled" format="boolean"/>
+        <attr name="preview_layout" format="reference"/>
     </declare-styleable>
 </resources>
